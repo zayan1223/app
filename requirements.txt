@@ -1,6 +1,0 @@
-Flask
-langchain
-matplotlib
-numpy
-nltk
-gensim
