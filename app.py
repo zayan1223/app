@@ -1,9 +1,4 @@
-!CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip3 install llama-cpp-python
-!pip3 install huggingface-hub
-!pip3 install sentence-transformers langchain langchain-experimental
-!huggingface-cli download TheBloke/phi-2-GGUF phi-2.Q4_K_M.gguf --local-dir /content --local-dir-use-symlinks False
-! pip install textract
-!pip install Flask
+
 from flask import Flask, request, jsonify
 import os
 from langchain.llms import LlamaCpp
