@@ -1,0 +1,7 @@
+Flask
+langchain
+matplotlib
+numpy
+nltk
+gensim
+langchain_community
