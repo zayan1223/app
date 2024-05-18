@@ -5,3 +5,5 @@ numpy
 nltk
 gensim
 langchain-community
+--upgrade gensim scipy
+gensim==<version> scipy==<version>
