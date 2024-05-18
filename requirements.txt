@@ -4,4 +4,4 @@ matplotlib
 numpy
 nltk
 gensim
-sklearn
+
