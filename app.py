@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 import os
 from langchain.llms import LlamaCpp
@@ -17,30 +16,18 @@ nltk.download('punkt')
 
 app = Flask(__name__)
 
-
-
-UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-@app.route('/upload-cv', methods=['POST'])
-def upload_cv():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
-    if file:
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return jsonify({'message': 'File uploaded successfully', 'filename': filename})
-
-
+# Define the text variable with corrected formatting
+text = '''{
+    "work experience": " hfyyskl/lkf;os mjdioslld mkidido.d kdodlf",
+    "certification history": "hggdyud",
+    "skills ": "nshskdllc"
+}'''
 
 # Disable GPU usage
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # Callback manager setup
-callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+callback_manager = CallbackManager([])  # Removed undefined StreamingStdOutCallbackHandler()
 
 # Creating LlamaCpp instance
 llm = LlamaCpp(
@@ -71,15 +58,15 @@ Text: {text}
 Question: {question}
 Output:"""
 
+template_skills = """Instruction:
+Focus solely on extracting the skills mentioned in the text below, excluding any other details or context. Your answer should consist of concise skills.
+Text: {text}
+Question: {question}
+Output:"""
+
 @app.route('/generate_text', methods=['POST'])
 def generate_text():
     data = request.get_json()
-    model_path = data.get('model_path')
-    temperature = data.get('temperature')
-    n_gpu_layers = data.get('n_gpu_layers', 0)  # default to 0 if not provided
-    n_batch = data.get('n_batch', 1024)  # default to 1024 if not provided
-    n_ctx = data.get('n_ctx', 2048)  # default to 2048 if not provided
-
     question = data.get('question')
     text = data.get('text')
 
@@ -113,9 +100,20 @@ def generate_text():
 
         return jsonify({"generated_text": ans_contact_info})
 
+    elif question == "What are the 6 skills? Please provide a concise short answer of the only(skills) mentioned in the text without repeating the answer.":
+        # Define the PromptTemplate instance for skills
+        prompt_skills = PromptTemplate(template=template_skills, input_variables=["question","text"])
+        # Create a chain for extracting skills
+        chain_skills = prompt_skills | llm | StrOutputParser()
+
+        # Invoke the chain to extract skills
+        ans_skills = chain_skills.invoke({"question": question, "text": text})
+
+        return jsonify({"generated_text": ans_skills})
+
     else:
         return jsonify({"error": "Invalid question provided."})
-        from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 # Sample texts
@@ -193,7 +191,7 @@ def text_embedding(text):
 text_embeddings = [text_embedding(text) for text in texts]
 
 # Specify the input text
-input_text = "Quality Assurance,TestRail; Appium; Redmine; Jenkins"
+input_text = template_skills
 
 # Calculate cosine similarity
 input_embedding = text_embedding(input_text)
@@ -294,8 +292,7 @@ def text_embedding(text):
 text_embeddings = [text_embedding(text) for text in texts]
 
 # Specify the input text
-input_text = "Quality Assurance,TestRail; Appium; Redmine; Jenkins"
-
+input_text =template_skills
 # Calculate cosine similarity
 input_embedding = text_embedding(input_text)
 similarities = cosine_similarity([input_embedding], text_embeddings).flatten()
