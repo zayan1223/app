@@ -1,0 +1,7 @@
+Flask
+llama-cpp-python
+huggingface-hub
+sentence-transformers
+langchain
+langchain-experimental
+textract
