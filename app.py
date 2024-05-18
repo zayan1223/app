@@ -17,7 +17,7 @@ nltk.download('punkt')
 app = Flask(__name__)
 
 # Define the text variable with corrected formatting
-text = '''{
+cv_text  = '''{
     "work experience": " hfyyskl/lkf;os mjdioslld mkidido.d kdodlf",
     "certification history": "hggdyud",
     "skills ": "nshskdllc"
@@ -191,7 +191,7 @@ def text_embedding(text):
 text_embeddings = [text_embedding(text) for text in texts]
 
 # Specify the input text
-input_text = template_skills
+input_text = "UI Front-End Developer,HTML; CSS; JavaScript; Angular.js"
 
 # Calculate cosine similarity
 input_embedding = text_embedding(input_text)
@@ -292,7 +292,7 @@ def text_embedding(text):
 text_embeddings = [text_embedding(text) for text in texts]
 
 # Specify the input text
-input_text =template_skills
+input_text ="UI Front-End Developer,HTML; CSS; JavaScript; Angular.js"
 # Calculate cosine similarity
 input_embedding = text_embedding(input_text)
 similarities = cosine_similarity([input_embedding], text_embeddings).flatten()
